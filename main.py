@@ -33,6 +33,7 @@ def fill_in_login_form(username: str, pw: str, capt_field: str, login_btn: str) 
         browser.find_element_by_css_selector(capt_field).send_keys(captcha)
         browser.find_element_by_css_selector(login_btn).click()
         time.sleep(1)
+        usr_name, password = '',''
     return None
 
 
