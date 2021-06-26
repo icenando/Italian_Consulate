@@ -75,10 +75,26 @@ python main.py
 3. Still in Terminal, you'll be prompted to enter your username, passwords, and captcha. As you enter these details, Chrome will fill them in on the webpage. If all details are correct, you should be automatically logged in. These details are not saved anywhere in the code. It is only used to fill in the log in form.
    &nbsp;
 4. You don't need to do anything else: the app will automatically check for available appointments the following month (as the current month is always booked up). It does this every 25 seconds.
+<<<<<<< HEAD
    If a free slot is found, a voice message will be played in your computer, and you'll receive an SMS. You will then have to login and manually complete the booking directly on the consulate's website.
    &nbsp;
+||||||| b387c02
+&nbsp;
+
+=======
+   If a free slot is found, a voice message will be played in your computer, and you'll receive an SMS. You will then have to login and manually complete the booking directly on the consulate's website.
+   &nbsp;
+
+>>>>>>> 1ba1d9a13c63fab568a0dd5a491f3755402463d6
 <h2>LIMITATIONS</h2>
+<<<<<<< HEAD
 <p>The code does not crack the captcha, so you will need to re-run the code every time this happens (usually each two hours). Still, this is better than having to manually refresh the page and check the dates each 25 seconds.</p>
 <br>
 <h2>LICENSE</h2>
 <p><a href='https://choosealicense.com/licenses/gpl-3.0/'>GNU GPLv3</a></p>
+||||||| b387c02
+The code does not crack the captcha, so you will need to re-run the code every time this happens (usually each couple of hours). Still, this is better than having to manually refresh the page and check the dates each 25 seconds.
+
+=======
+The code does not crack the captcha, so you will need to re-run the code every time this happens (usually each two hours). Still, this is better than having to manually refresh the page and check the dates each 25 seconds.
+>>>>>>> 1ba1d9a13c63fab568a0dd5a491f3755402463d6
