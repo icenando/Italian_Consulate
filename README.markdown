@@ -57,3 +57,19 @@
     &nbsp;
 
 <h2>RUNNING THE CODE</h2>
+1. In Terminal, run the code as follows:
+
+```
+python main.py 
+```
+2. This will launch Chrome and load the Italian Consulate in London's website. DO NOT CLOSE THIS WINDOW!
+Take not of the captcha.
+
+3. Still in Terminal, you'll be prompted to enter your username, passwords, and captcha. As you enter these details, Chrome will fill them in on the webpage. If all details are correct, you should be automatically logged in.
+
+4. You don't need to do anything else: the app will automatically check for available appointments the following month (as the current month is always booked up). It does this every 25 seconds.
+&nbsp;
+
+<h2>LIMITATIONS</h2>
+The code does not crack the captcha, so you will need to re-run the code every time this happens (usually each couple of hours). Still, this is better than having to manually refresh the page and check the dates each 25 seconds.
+
