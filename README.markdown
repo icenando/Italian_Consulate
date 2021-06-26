@@ -1,9 +1,14 @@
 <h1>AVAILABILITY CHECKER</h1>
-<p>Automatically checks for appointment slots at the Italian Consulate in London, UK.</p>
+
+<p>Automatically checks for appointment for passport renewals at the Italian Consulate in London, UK.</p>
 <br>
 <h2>MOTIVATION</h2>
-<p>Getting appointments for passport renewals at the Italian Consulate in London is infamously difficult, with gangs illegally selling appointments at a premium price. This code regularly checks for availability and alerts users, via SMS and email, as soon as a slot becomes available.</p>
-<p>I was able to book an appointment two days after implementing this code. It could be easily adapted for other online booking systems.</p>
+<p>Getting appointments for passport renewals at the Italian Consulate in London is infamously difficult, with gangs illegally selling appointments at a premium price.</p>
+<p>This code regularly checks for availability and alerts users, via SMS and email, as soon as a slot becomes available.</p>
+<p>I was able to book an appointment two days after implementing this code.</p>
+<br>
+<h2>COMPATIBILITY</h2>
+<p>MacOS with Chrome</p>
 <br>
 <h2>SETUP</h2>
 
@@ -12,7 +17,7 @@
    ```
    mkdir italian_consulate && cd italian_consulate
    ```
-2. Create a virtual environment for the app to run. I chose to name mine '.italian_consulate'. The dot in front of the name makes the virtual environment isolated from the rest of the system (also makes it an invisible):
+2. Create a virtual environment for the app to run. I chose to name mine '.italian_consulate'. The dot in front of the name makes the virtual environment isolated from the rest of the system (also makes it invisible):
 
    ```
    python3 -m venv .italian_consulate
@@ -39,7 +44,7 @@
    a) your ACCOUNT SID and
    b) AUTH TOKEN.
    &nbsp;
-9. You'll also need to take note of c) your TWILIO PHONE NUMBER, which can be found by clicking on the three dots on the left of your console page, under the home tab. This number is where the SMS will be sent from. You will also need to have your own MOBILE NUMBER.
+9. You'll also need to take note of c) your TWILIO PHONE NUMBER, which can be found by clicking on the three dots on the left of your console page, under the home tab. This number is where the SMS will be sent from. You will also need to have d) your own MOBILE NUMBER.
    &nbsp;
 10. Once you have Twilio's ACCOUNT SID, AUTH TOKEN, TWILIO PHONE NUMBER and MOBILE NUMBER, in your Terminal window export them as environment variables as follows:
 
@@ -50,26 +55,30 @@
     export MOB_NUM='your_mobile_number'
     ```
 11. On the consulate's website, there is an optional field 'Nota' for notes that you might want to add to your booking. If you would like this field to be filled, add the following in Terminal:
-12. ```
+
+    ```
     export NOTA='write_your_note_here'
     ```
 
+    Otherwise it will be left blank.
     &nbsp;
-
 <h2>RUNNING THE CODE</h2>
 1. In Terminal, run the code as follows:
 
 ```
 python main.py 
 ```
+
 2. This will launch Chrome and load the Italian Consulate in London's website. DO NOT CLOSE THIS WINDOW!
-Take not of the captcha.
-
-3. Still in Terminal, you'll be prompted to enter your username, passwords, and captcha. As you enter these details, Chrome will fill them in on the webpage. If all details are correct, you should be automatically logged in.
-
+   After a few seconds, the log in page will be loaded. Take not of the captcha and return to Terminal (DO NOT FILL IN YOUR DETAILS ON THIS PAGE).
+   &nbsp;
+3. Still in Terminal, you'll be prompted to enter your username, passwords, and captcha. As you enter these details, Chrome will fill them in on the webpage. If all details are correct, you should be automatically logged in. These details are not saved anywhere in the code. It is only used to fill in the log in form.
+   &nbsp;
 4. You don't need to do anything else: the app will automatically check for available appointments the following month (as the current month is always booked up). It does this every 25 seconds.
-&nbsp;
-
+   If a free slot is found, a voice message will be played in your computer, and you'll receive an SMS. You will then have to login and manually complete the booking directly on the consulate's website.
+   &nbsp;
 <h2>LIMITATIONS</h2>
-The code does not crack the captcha, so you will need to re-run the code every time this happens (usually each couple of hours). Still, this is better than having to manually refresh the page and check the dates each 25 seconds.
-
+<p>The code does not crack the captcha, so you will need to re-run the code every time this happens (usually each two hours). Still, this is better than having to manually refresh the page and check the dates each 25 seconds.</p>
+<br>
+<h2>LICENSE</h2>
+<p><a href='https://choosealicense.com/licenses/gpl-3.0/'>GNU GPLv3</a></p>
