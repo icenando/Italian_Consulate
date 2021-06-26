@@ -3,7 +3,7 @@
 
 from twilio.rest import Client  # Twilio.com, for SMS message.
 import os
-from selenium.webdriver import Chrome
+
 
 ##### Twilio variables #####
 # Open a Twilio account and retrieve the following info.
@@ -14,3 +14,9 @@ myMobNumber = os.environ['MOB_NUM']    # Number that will be receive the SMS not
 ########################
 
 twilioCli = Client(accountSID, authToken)
+
+# Optional field 'Nota' on Italian Consulate website
+if os.getenv('NOTA') != None:
+    nota = os.environ['NOTA']
+else:
+    nota = ''
