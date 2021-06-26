@@ -6,6 +6,7 @@ from selenium.common.exceptions import NoSuchElementException
 
 from os import system  # Just for the voice alert.
 import time  # Delays to allow website to load all elements.
+from pyinputplus import inputPassword # To hide password during input.
 
 
 
@@ -25,8 +26,7 @@ def fill_in_login_form(username: str, pw: str, capt_field: str, login_btn: str) 
         print("Enter username HERE: ", end='')
         usr_name = input()
         browser.find_element_by_css_selector(username).send_keys(usr_name)
-        print("Enter password HERE: ", end = '')
-        password = input()
+        password = inputPassword("Enter password HERE: ")
         browser.find_element_by_css_selector(pw).send_keys(password)
         print("Enter captcha HERE: ", end='')
         captcha = input()
