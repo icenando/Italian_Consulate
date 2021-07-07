@@ -1,3 +1,4 @@
+from selenium import webdriver
 from config import twilioCli, myTwilioNumber, myMobNumber, twilioCli, my_email, password
 from func_vars import *
 
@@ -153,6 +154,8 @@ def main():
 
 
 if __name__ == '__main__':
-    browser = Chrome(executable_path='/usr/local/bin/chromedriver')  # Launches browswer.
+    options = webdriver.ChromeOptions()
+    options.headless=True
+    browser = Chrome(executable_path='/usr/local/bin/chromedriver', options=options)  # Launches browswer.
     time.sleep(2)
     main()
