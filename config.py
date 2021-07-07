@@ -15,6 +15,10 @@ myMobNumber = os.environ['MOB_NUM']    # Number that will be receive the SMS not
 
 twilioCli = Client(accountSID, authToken)
 
+
+my_email = os.environ['EMAIL']
+password = os.environ['PW']
+
 # Optional field 'Nota' on Italian Consulate website
 if os.getenv('NOTA') != None:
     nota = os.environ['NOTA']
