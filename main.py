@@ -90,12 +90,11 @@ def monitor_calendar_changes(next_month: str, calendar: str, day_status: list, c
                     checking_day = day.text
                     print(checking_day, end=' ')
                     if day.get_attribute("class") not in day_status:
-                        print(day.get_attribute("class"))
-                        print(' >>\n\n')
+                        print(' >>\n')
                         message = "Available slot: " + ' '.join([checking_day, checking_month]) + ' am'
-                        print(f"\n\n<< **** {message} ****>>\n\n")
+                        print(f"\n<< **** {message} **** >>\n\n")
                         # Sends the message.
-                        # twilioCli.messages.create(body=message, from_=myTwilioNumber, to=myMobNumber)
+                        twilioCli.messages.create(body=message, from_=myTwilioNumber, to=myMobNumber)
                         slot = True
                         return None
             print(' >>')
