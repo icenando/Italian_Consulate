@@ -6,6 +6,7 @@
 <p>Getting appointments for passport renewals at the Italian Consulate in London is infamously difficult, with gangs illegally selling appointments at a premium price.</p>
 <p>This code regularly checks for availability and alerts users, via SMS and email, as soon as a slot becomes available.</p>
 <p>I was able to book an appointment two days after implementing this code.</p>
+<p>Frankly, the Italian Consulate should offer this notification service themselves...</p>
 <br>
 <h2>COMPATIBILITY</h2>
 <p>MacOS with Chrome</p>
@@ -34,7 +35,7 @@
    ```
 5. Open a free trial account with Twilio by following the steps described here: https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account
    &nbsp;
-6. This app will need to control a browser window to interact with the Italian Consulate's webpage. In order for it to do so, you'll also need to download a driver for Chrome. Download the driver for your veresion of Chrome here: https://sites.google.com/a/chromium.org/chromedriver/downloads
+6. This app will need to control Chrome to interact with the Italian Consulate's webpage. In order for it to do so, you'll also need to download a driver for Chrome. Download the driver for your veresion of Chrome here: https://sites.google.com/a/chromium.org/chromedriver/downloads
 
    Save the driver to the following folder: '/usr/local/bin/'
    &nbsp;
@@ -74,20 +75,16 @@ Otherwise it will be left blank.
 &nbsp;
 
 <h2>RUNNING THE CODE</h2>
-1. In Terminal, run the code as follows:
+1. In Terminal, with the virtual environment still active (see step 3, above), run the code as follows:
 
 ```
 python main.py 
 ```
 
-2. This will launch Chrome and load the Italian Consulate in London's website. DO NOT CLOSE THIS WINDOW!
-   After a few seconds, the log in page will be loaded. Take not of the captcha and return to Terminal (DO NOT FILL IN YOUR DETAILS ON THIS PAGE).
-   &nbsp;
-3. Still in Terminal, you'll be prompted to enter your username, passwords, and captcha. As you enter these details, Chrome will fill them in on the webpage. If all details are correct, you should be automatically logged in. These details are not saved anywhere in the code. It is only used to fill in the log in form.
-   &nbsp;
-4. You don't need to do anything else: the app will automatically check for available appointments the following month (as the current month is always booked up). It does this every 25 seconds.
-   If a free slot is found, a voice message will be played in your computer, and you'll receive an SMS. You will then have to login and manually complete the booking directly on the consulate's website.
-   &nbsp;
+2. You don't need to do anything else: the app will automatically check for available appointments in the current month and the following two months. It does this every 25 seconds.
+
+If a free slot is found, a voice message will be played in your computer, and you'll receive an SMS. You will then have to login and manually complete the booking directly on the consulate's website.
+&nbsp;
 
 <br>
 <h2>LICENSE</h2>
