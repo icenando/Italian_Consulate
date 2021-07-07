@@ -53,7 +53,7 @@ def prenota_il_servizio(
             conf_btn: str
             ) -> None:
     print("<< Navigating to services page >>")
-    delay = 1
+    delay = 1.5
     browser.find_element_by_css_selector(prenota).click()  # "prenota il servizio".
     time.sleep(delay)
     browser.find_element_by_css_selector(passp).click()  # "passaporto".
@@ -76,8 +76,8 @@ def monitor_calendar_changes(next_month: str, calendar: str, day_status: list, c
         try:
             current_calendar = browser.find_element_by_css_selector(calendar)
         except NoSuchElementException:
-            print("<< Automatically logged out >>")
-            # system('say "You have been logged out. Relaunch the programme."')
+            print("<< Automatically logged out. Attempting to restart >>")
+            main()
             return None
 
         two_months_ahead = 0
@@ -101,9 +101,10 @@ def monitor_calendar_changes(next_month: str, calendar: str, day_status: list, c
             print(' >>')
             print(f"<< No available slots in {checking_month} >>\n")
             # Advances the calendar to next month.
-            browser.find_element_by_css_selector(next_month).click()
+            if two_months_ahead < 2:
+                browser.find_element_by_css_selector(next_month).click()
+                time.sleep(2)
             two_months_ahead += 1
-            time.sleep(2)
 
         if not slot:  # If no free slots are found, refreshes the page before looking for free slots again.
             print("<< Awaiting to refresh the page before restarting search >>")
@@ -121,10 +122,7 @@ def monitor_calendar_changes(next_month: str, calendar: str, day_status: list, c
     return None
 
 
-if __name__ == '__main__':
-    browser = Chrome(executable_path='/usr/local/bin/chromedriver')  # Launches browswer.
-    time.sleep(2)
-
+def main():
     load_page(initial_url)
     time.sleep(2)
 
@@ -153,3 +151,9 @@ if __name__ == '__main__':
         )
 
     browser.quit()
+
+
+if __name__ == '__main__':
+    browser = Chrome(executable_path='/usr/local/bin/chromedriver')  # Launches browswer.
+    time.sleep(2)
+    main()

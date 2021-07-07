@@ -1,6 +1,6 @@
 <h1>AVAILABILITY CHECKER</h1>
 
-<p>Automatically checks for appointment for passport renewals at the Italian Consulate in London, UK.</p>
+<p>Automatically checks for appointment for passport renewals at the Italian Consulate in London, UK. It works for the current month and the next two.</p>
 <br>
 <h2>MOTIVATION</h2>
 <p>Getting appointments for passport renewals at the Italian Consulate in London is infamously difficult, with gangs illegally selling appointments at a premium price.</p>
