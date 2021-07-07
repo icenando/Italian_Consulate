@@ -54,14 +54,25 @@
     export TWILIO_NUM='your_twilio_phone_number'
     export MOB_NUM='your_mobile_number'
     ```
-11. On the consulate's website, there is an optional field 'Nota' for notes that you might want to add to your booking. If you would like this field to be filled, add the following in Terminal:
+    &nbsp;
+
+11. Now you'll need to export your login details as environment variables. These are saved to be used each time you get logged out (which happens automatically each couple of hours).
+
+************************************************************************************************* IT'S STRONGLY RECOMMENDED THAT YOU CREATE A UNIQUE LOG IN FOR THIS WEBSITE! I AM NOT RESPONSIBLE FOR ANYTHING THAT GOES WRONG WITH YOUR CREDENTIALS, OR IN CASE OF DATA LEAKS! NOTHING IS HASHED HERE, AND I GAVE VERY LITTLE CONSIDERATION TO SECURITY IN THIS CODE! *************************************************************************************************
+   ```
+   export EMAIL="<your_email_goes_here>"
+   export PW="<your_password_goes_here>"
+   ```
+&nbsp;
+12. On the consulate's website, there is an optional field 'Nota' for notes that you might want to add to your booking. If you would like this field to be filled, add the following in Terminal:
 
     ```
     export NOTA='write_your_note_here'
     ```
 
-    Otherwise it will be left blank.
-    &nbsp;
+Otherwise it will be left blank.
+&nbsp;
+
 <h2>RUNNING THE CODE</h2>
 1. In Terminal, run the code as follows:
 
@@ -77,8 +88,7 @@ python main.py
 4. You don't need to do anything else: the app will automatically check for available appointments the following month (as the current month is always booked up). It does this every 25 seconds.
    If a free slot is found, a voice message will be played in your computer, and you'll receive an SMS. You will then have to login and manually complete the booking directly on the consulate's website.
    &nbsp;
-<h2>LIMITATIONS</h2>
-<p>The code does not crack the captcha, so you will need to re-run the code every time this happens (usually each two hours). Still, this is better than having to manually refresh the page and check the dates each 25 seconds.</p>
+
 <br>
 <h2>LICENSE</h2>
 <p><a href='https://choosealicense.com/licenses/gpl-3.0/'>GNU GPLv3</a></p>
