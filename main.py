@@ -2,10 +2,10 @@ from selenium import webdriver
 from selenium.webdriver import Chrome
 from selenium.common.exceptions import NoSuchElementException
 
-import time  # Delays to allow website to load all elements.
 import sys
 import os
 from datetime import datetime
+import time
 
 from config import twilioCli, myTwilioNumber, myMobNumber, twilioCli, my_email, password
 from func_vars import *
@@ -69,7 +69,6 @@ class RunChecks():
         while not self.available_dates:
             for time_of_day, am_pm in enumerate(ufficio_passaporti_links):
                 self.__passaporto_am_pm(am_pm)
-                time.sleep(1.5)
 
                 calendar_response = self.__monitor_calendar_changes(time_of_day)
                 if calendar_response == "logged_out":
@@ -77,10 +76,11 @@ class RunChecks():
                 # If still logged in but no free slots are found, refreshes the page before starting again.
                 elif calendar_response == "no_avail_pm":
                     print("<< Awaiting to refresh the page before restarting search >>")
+                    # end_time = time.perf_counter()
+                    # print(end_time - start_time)
                     self.countdown(25)
                     print("<< Reloading page >>")
                     browser.get(servizi_link)
-                    time.sleep(2)
 
         # Sends the message.
         #TODO: Create function to parse, order, and send SMS with available dates.
@@ -92,7 +92,6 @@ class RunChecks():
 
     def __passaporto_am_pm(self, am_pm: str) -> None:       
         browser.find_element_by_css_selector(am_pm).click()  # "passaporto".
-        time.sleep(1.5)
 
         #TODO: Prenotazione singola / multipla
         if os.getenv('NOTA') != None:
@@ -126,7 +125,6 @@ class RunChecks():
                 return "no_avail_pm"
             # Loads the 'servizi' page, where am and pm links are
             browser.get(servizi_link)
-            time.sleep(1.5)
             return ''
 
         # After checks, if the calendar is in the page.
@@ -156,7 +154,6 @@ class RunChecks():
             # Advances the calendar to next month.
             if two_months_ahead < 2:
                 browser.find_element_by_css_selector(next_month_cal).click()
-                time.sleep(2)
             two_months_ahead += 1
 
         # No slots found in the current month and next two months.
@@ -210,7 +207,6 @@ def main() -> None:
     slot = False
     while not slot:
         load_page(initial_url)
-        time.sleep(2)
 
         if fill_in_login_form(  # if login fails
                 username_field, 
@@ -221,20 +217,22 @@ def main() -> None:
                 ):
             browser.quit()
             return None
-        time.sleep(1.5)
         
         if prenota_il_servizio(prenotaIlServizio_link):  #if no 'prenota' link
             continue
-        time.sleep(1.5)
         run_checks = RunChecks
         slot = run_checks()
+
+        # end_time = time.perf_counter()
+        # print(start_time - end_time)
 
     browser.quit()
     return None
 
 if __name__ == '__main__':
+    # start_time = time.perf_counter()
     options = webdriver.ChromeOptions()
     options.headless=True
     browser = Chrome(executable_path='/usr/local/bin/chromedriver', options=options)  # Launches browswer.
-    time.sleep(2)
+    browser.implicitly_wait(2)
     main()
