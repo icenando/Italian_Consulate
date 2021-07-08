@@ -84,7 +84,7 @@ class RunChecks():
 
         # Sends the message.
         #TODO: Create function to parse, order, and send SMS with available dates.
-        message = "Available dates at the Italian Consulate" + self.__parse_dates()
+        message = "Available dates at the Italian Consulate" + self.parse_dates()
         twilioCli.messages.create(body=message, from_=myTwilioNumber, to=myMobNumber)
 
         return True
@@ -93,9 +93,7 @@ class RunChecks():
     def __passaporto_am_pm(self, am_pm: str) -> None:       
         browser.find_element_by_css_selector(am_pm).click()  # "passaporto".
 
-        #TODO: Prenotazione singola / multipla
-        if os.getenv('NOTA') != None:
-            browser.find_element_by_css_selector(nota_css).send_keys(os.environ['NOTA'])  # Optional "Nota" field.
+
         browser.find_element_by_css_selector(privacy_check).click()  # Checks privavy checkbox.
         browser.find_element_by_css_selector(conferma_btn).click()
 
