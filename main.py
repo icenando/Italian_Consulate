@@ -21,7 +21,7 @@ class RunChecks():
         self.__driver_func()
 
 
-    def countdown(t) -> None:
+    def countdown(self, t) -> None:
         for i in range(t, 0, -1):
                 sys.stdout.flush()
                 if len(str(i)) < 2:
@@ -110,7 +110,7 @@ class RunChecks():
         if time_of_day == 0:
             time_of_day = 'am'
         else: time_of_day = "pm"
-        print(f"<< Searching {time_of_day} calendar for available appointment slots >>")
+        print(f"<< Searching ({time_of_day}) calendar for available appointment slots >>")
 
         # Tries to find calender:
         try:
@@ -124,7 +124,7 @@ class RunChecks():
                 return "logged_out"
 
             # If there is a 'no availability' pop up.
-            print(f"<< No availability ({time_of_day} >>")
+            print(f"<< No availability ({time_of_day}) >>")
             if time_of_day == "pm":
                 return "no_avail_pm"
             # Loads the 'servizi' page, where am and pm links are
@@ -229,7 +229,7 @@ def main() -> None:
         if prenota_il_servizio(prenotaIlServizio_link):  #if no 'prenota' link
             continue
         time.sleep(1.5)
-
+        run_checks = RunChecks
         slot = run_checks()
 
     browser.quit()
@@ -240,5 +240,4 @@ if __name__ == '__main__':
     options.headless=True
     browser = Chrome(executable_path='/usr/local/bin/chromedriver', options=options)  # Launches browswer.
     time.sleep(2)
-    run_checks = RunChecks()
     main()
