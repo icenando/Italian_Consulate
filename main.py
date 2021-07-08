@@ -30,9 +30,6 @@ class RunChecks():
                 time.sleep(1)
 
 
-    def __sort_dates(self) -> None:
-        pass
-
     def parse_dates(self) -> str:
             months_dict = {
                 'gennaio': '01',
