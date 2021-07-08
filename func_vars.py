@@ -14,8 +14,9 @@ login_conf_btn = "#login-form > button"
 
 # prenotaIlServizio()
 prenotaIlServizio_link = "#advanced > span"
-# There are only morning appointments available at the moment.
+servizi_link = "https://prenotami.esteri.it/Services"  # Here is where the am or pm links are
 ufficio_passaporti_link_am = "#dataTableServices > tbody > tr:nth-child(5) > td:nth-child(4) > a > button"
+ufficio_passaporti_link_pm = "#dataTableServices > tbody > tr:nth-child(6) > td:nth-child(4) > a > button"
 nota_css = "#BookingNotes"
 privacy_check = "#PrivacyCheck"
 conferma_btn = "#submit"

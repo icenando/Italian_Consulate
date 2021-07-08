@@ -26,24 +26,25 @@ def fill_in_login_form(
         my_email: str,
         password: str,
         wrong_pw = False,
-        ) -> None:
+        ) -> bool:
     # Repeat until login is succesful and page changes.
     password = password
 
     while browser.current_url != "https://prenotami.esteri.it/UserArea":
         browser.find_element_by_css_selector(username).clear()
         if wrong_pw:
-            print("<< Login failed. Please enter your email and password again >>")
-        # print("Enter email HERE: ", end='')
-        # my_email = input()
+            print("""
+                << Login failed >>\n
+                << Please export your credential as follows and relaunch the app: >>\n
+                export EMAIL='your_email_goes_here' && export PW='your_password_goes_here'
+                """)
+            return wrong_pw
         browser.find_element_by_css_selector(username).send_keys(my_email)
-        # password = inputPassword("Enter password HERE: ")
         browser.find_element_by_css_selector(pw).send_keys(password)
         browser.find_element_by_css_selector(login_btn).click()
         print('<< Filling in the form >>')
-        usr_name, password = '',''
         wrong_pw = True
-    return None
+    return False
 
 
 def prenota_il_servizio(
@@ -77,7 +78,13 @@ def monitor_calendar_changes(next_month: str, calendar: str, day_status: list, c
         try:
             current_calendar = browser.find_element_by_css_selector(calendar)
         except NoSuchElementException:
-            print("<< Automatically logged out. Attempting to restart >>")
+            print("<< Automatically logged out or no appointments available. Attempting to restart >>")
+            for i in range(25, 0, -1):
+                sys.stdout.flush()
+                if len(str(i)) < 2:
+                    i = str(f" {i}")
+                sys.stdout.write (f'\t{i}\r',)
+                time.sleep(1)
             main()
             return None
 
@@ -126,13 +133,15 @@ def main():
     load_page(initial_url)
     time.sleep(2)
 
-    fill_in_login_form(
-        username_field, 
-        pw_field, 
-        login_conf_btn, 
-        my_email, 
-        password
-        )
+    if fill_in_login_form(  # if login fails
+            username_field, 
+            pw_field, 
+            login_conf_btn, 
+            my_email, 
+            password
+            ):
+        browser.quit()
+        return None
     time.sleep(1.5)
     
     prenota_il_servizio(
