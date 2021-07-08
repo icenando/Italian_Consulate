@@ -1,17 +1,170 @@
 from selenium import webdriver
-from config import twilioCli, myTwilioNumber, myMobNumber, twilioCli, my_email, password
-from func_vars import *
-
 from selenium.webdriver import Chrome
 from selenium.common.exceptions import NoSuchElementException
 
-# from os import system  # Just for the voice alert.
 import time  # Delays to allow website to load all elements.
-from pyinputplus import inputPassword # To hide password during input.
 import sys
 import os
+from datetime import datetime
+
+from config import twilioCli, myTwilioNumber, myMobNumber, twilioCli, my_email, password
+from func_vars import *
+
 
 # Start of programme
+
+class RunChecks():
+    available_dates = []
+
+
+    def __init__(self) -> None:
+        self.__driver_func()
+
+
+    def countdown(self, t) -> None:
+        for i in range(t, 0, -1):
+                sys.stdout.flush()
+                if len(str(i)) < 2:
+                    i = str(f" {i}")
+                sys.stdout.write (f'\t{i}\r',)
+                time.sleep(1)
+
+
+    def __sort_dates(self) -> None:
+        pass
+
+    def parse_dates(self) -> str:
+            months_dict = {
+                'gennaio': '01',
+                'febbraio': '02',
+                'marzo': '03',
+                'aprile': '04',
+                'maggio': '05',
+                'giugno': '06',
+                'luglio': '07',
+                'agosto': '08',
+                'settembre': '09',
+                'ottobre': '10',
+                'novembre': '11',
+                'dicembre': '12'
+            }
+
+            for i in range(len(self.available_dates)):
+                # if len(self.available_dates[i][0]) == 1:
+                #     day = '0' + self.available_dates[i][0]
+                # else:
+                day = self.available_dates[i][0]
+                month = months_dict[self.available_dates[i][1][:-5]]
+                year = self.available_dates[i][1][-4:]
+                self.available_dates[i] = '/'.join([day, month, year])
+                # Converts to datetime for sorting
+                self.available_dates[i] = datetime.strptime(self.available_dates[i], '%d/%m/%Y')
+                
+            self.available_dates.sort()
+            # Converts back to str
+            for i in range(len(self.available_dates)):
+                self.available_dates[i] = datetime.strftime(self.available_dates[i], '%d/%m/%Y')
+
+            return ', '.join(self.available_dates)
+
+    def __driver_func(self) -> bool:
+
+        while not self.available_dates:
+            for time_of_day, am_pm in enumerate(ufficio_passaporti_links):
+                self.__passaporto_am_pm(am_pm)
+                time.sleep(1.5)
+
+                calendar_response = self.__monitor_calendar_changes(time_of_day)
+                if calendar_response == "logged_out":
+                    return False
+                # If still logged in but no free slots are found, refreshes the page before starting again.
+                elif calendar_response == "no_avail_pm":
+                    print("<< Awaiting to refresh the page before restarting search >>")
+                    self.countdown(25)
+                    print("<< Reloading page >>")
+                    browser.get(servizi_link)
+                    time.sleep(2)
+
+        # Sends the message.
+        #TODO: Create function to parse, order, and send SMS with available dates.
+        message = "Available dates at the Italian Consulate" + self.__parse_dates()
+        twilioCli.messages.create(body=message, from_=myTwilioNumber, to=myMobNumber)
+
+        return True
+
+
+    def __passaporto_am_pm(self, am_pm: str) -> None:       
+        browser.find_element_by_css_selector(am_pm).click()  # "passaporto".
+        time.sleep(1.5)
+
+        #TODO: Prenotazione singola / multipla
+        if os.getenv('NOTA') != None:
+            browser.find_element_by_css_selector(nota_css).send_keys(os.environ['NOTA'])  # Optional "Nota" field.
+        browser.find_element_by_css_selector(privacy_check).click()  # Checks privavy checkbox.
+        browser.find_element_by_css_selector(conferma_btn).click()
+
+        return None
+
+
+    def __monitor_calendar_changes(self, time_of_day: str) -> str:
+        if time_of_day == 0:
+            time_of_day = 'am'
+        else: time_of_day = "pm"
+        print(f"<< Searching ({time_of_day}) calendar for available appointment slots >>")
+
+        # Tries to find calender:
+        try:
+            current_calendar = browser.find_element_by_css_selector(calendar_selector)
+        except NoSuchElementException:
+            # If no calendar, checks if there's 'no availability' pop up.
+            try:
+                browser.find_element_by_css_selector(no_services_popup)
+            except NoSuchElementException:
+                print("<< Automatically logged out. Restarting >>")
+                return "logged_out"
+
+            # If there is a 'no availability' pop up.
+            print(f"<< No availability ({time_of_day}) >>")
+            if time_of_day == "pm":
+                return "no_avail_pm"
+            # Loads the 'servizi' page, where am and pm links are
+            browser.get(servizi_link)
+            time.sleep(1.5)
+            return ''
+
+        # After checks, if the calendar is in the page.
+        two_months_ahead = 0
+        while two_months_ahead <= 2:
+            checking_month = browser.find_element_by_css_selector(current_month).text
+            print(f"<< Checking month: {checking_month} >>")
+            print("<< Checking days: ", end= '')
+            # Iterates through weeks.
+            for week in current_calendar.find_elements_by_css_selector('tr'):
+                # Iterates through the days of that week.
+                for day in week.find_elements_by_tag_name('td'):
+                    checking_day = day.text
+                    print(checking_day, end=' ')
+                    # If available day.
+                    if day.get_attribute("class") not in day_status:
+                        print(' >>\n')
+                        slot_date = ' '.join([checking_day, checking_month])
+                        message = "Available slot: " + slot_date + time_of_day
+                        print(f"\n<< **** {message} **** >>\n\n")
+                        self.available_dates.append([checking_day, checking_month])
+                        return None
+
+            # If no slots found.    
+            print(' >>')
+            print(f"<< No available slots in {checking_month} >>\n")
+            # Advances the calendar to next month.
+            if two_months_ahead < 2:
+                browser.find_element_by_css_selector(next_month_cal).click()
+                time.sleep(2)
+            two_months_ahead += 1
+
+        # No slots found in the current month and next two months.
+        return None
+
 
 def load_page(url: str) -> None:
     print('<< Loading page >>')
@@ -47,120 +200,40 @@ def fill_in_login_form(
     return False
 
 
-def prenota_il_servizio(
-            prenota: str, 
-            passp: str, 
-            nota: str, 
-            priv_check: str, 
-            conf_btn: str
-            ) -> None:
+def prenota_il_servizio(prenota: str) -> None:
     print("<< Navigating to services page >>")
-    delay = 1.5
-    browser.find_element_by_css_selector(prenota).click()  # "prenota il servizio".
-    time.sleep(delay)
-    browser.find_element_by_css_selector(passp).click()  # "passaporto".
-    time.sleep(delay)
-
-    #TODO: Prenotazione singola / multipla
-    if os.getenv('NOTA') != None:
-        browser.find_element_by_css_selector(nota).send_keys(os.environ['NOTA'])  # Optional "Nota" field.
-    browser.find_element_by_css_selector(priv_check).click()  # Checks privavy checkbox.
-    browser.find_element_by_css_selector(conf_btn).click()
-    return None
+    try:
+        prenota_btn = browser.find_element_by_css_selector(prenota).click()  # "prenota il servizio".
+    except NoSuchElementException:
+        return True
+    pass
 
 
-def monitor_calendar_changes(next_month: str, calendar: str, day_status: list, current_month: str) -> None:
-    print("<< Searching calendar for available appointment slots >>")
+def main() -> None:
     slot = False
-    
-    # Repeats until a free slot is found.
     while not slot:
-        try:
-            current_calendar = browser.find_element_by_css_selector(calendar)
-        except NoSuchElementException:
-            print("<< Automatically logged out or no appointments available. Attempting to restart >>")
-            for i in range(25, 0, -1):
-                sys.stdout.flush()
-                if len(str(i)) < 2:
-                    i = str(f" {i}")
-                sys.stdout.write (f'\t{i}\r',)
-                time.sleep(1)
-            main()
+        load_page(initial_url)
+        time.sleep(2)
+
+        if fill_in_login_form(  # if login fails
+                username_field, 
+                pw_field, 
+                login_conf_btn, 
+                my_email, 
+                password
+                ):
+            browser.quit()
             return None
-
-        two_months_ahead = 0
-        while two_months_ahead <= 2:
-            checking_month = browser.find_element_by_css_selector(current_month).text
-            print(f"<< Checking month: {checking_month} >>")
-            print("<< Checking days: ", end= '')
-            for week in current_calendar.find_elements_by_css_selector('tr'):   # Iterates through weeks.
-                for day in week.find_elements_by_tag_name('td'):  # Iterates through the days of that week.
-                    checking_day = day.text
-                    print(checking_day, end=' ')
-                    if day.get_attribute("class") not in day_status:
-                        print(' >>\n')
-                        message = "Available slot: " + ' '.join([checking_day, checking_month]) + ' am'
-                        print(f"\n<< **** {message} **** >>\n\n")
-                        # Sends the message.
-                        twilioCli.messages.create(body=message, from_=myTwilioNumber, to=myMobNumber)
-                        slot = True
-                        return None
-            print(' >>')
-            print(f"<< No available slots in {checking_month} >>\n")
-            # Advances the calendar to next month.
-            if two_months_ahead < 2:
-                browser.find_element_by_css_selector(next_month).click()
-                time.sleep(2)
-            two_months_ahead += 1
-
-        if not slot:  # If no free slots are found, refreshes the page before looking for free slots again.
-            print("<< Awaiting to refresh the page before restarting search >>")
-            for i in range(25, 0, -1):
-                sys.stdout.flush()
-                if len(str(i)) < 2:
-                    i = str(f" {i}")
-                sys.stdout.write (f'\t{i}\r',)
-                time.sleep(1)
-            
-            print("<< Reloading page >>")
-            browser.refresh()
-            time.sleep(2)
-
-    return None
-
-
-def main():
-    load_page(initial_url)
-    time.sleep(2)
-
-    if fill_in_login_form(  # if login fails
-            username_field, 
-            pw_field, 
-            login_conf_btn, 
-            my_email, 
-            password
-            ):
-        browser.quit()
-        return None
-    time.sleep(1.5)
-    
-    prenota_il_servizio(
-        prenotaIlServizio_link, 
-        ufficio_passaporti_link_am, 
-        nota_css, 
-        privacy_check, 
-        conferma_btn)
-    time.sleep(1)
-
-    monitor_calendar_changes(
-        next_month_cal, 
-        calendar_selector, 
-        day_status, 
-        current_month
-        )
+        time.sleep(1.5)
+        
+        if prenota_il_servizio(prenotaIlServizio_link):  #if no 'prenota' link
+            continue
+        time.sleep(1.5)
+        run_checks = RunChecks
+        slot = run_checks()
 
     browser.quit()
-
+    return None
 
 if __name__ == '__main__':
     options = webdriver.ChromeOptions()
