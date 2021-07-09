@@ -13,6 +13,14 @@ from func_vars import *
 
 # Start of programme
 
+# start_time = time.perf_counter()
+options = webdriver.ChromeOptions()
+options.headless=True
+browser = Chrome(executable_path='/usr/local/bin/chromedriver', options=options)  # Launches browswer.
+browser.implicitly_wait(2)
+
+
+
 class RunChecks():
     available_dates = []
 
@@ -228,9 +236,4 @@ def main() -> None:
     return None
 
 if __name__ == '__main__':
-    # start_time = time.perf_counter()
-    options = webdriver.ChromeOptions()
-    options.headless=True
-    browser = Chrome(executable_path='/usr/local/bin/chromedriver', options=options)  # Launches browswer.
-    browser.implicitly_wait(2)
     main()
