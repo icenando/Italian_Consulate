@@ -203,7 +203,7 @@ def fill_in_login_form(
 def prenota_il_servizio(prenota: str) -> None:
     print("<< Navigating to services page >>")
     try:
-        prenota_btn = browser.find_element_by_css_selector(prenota).click()  # "prenota il servizio".
+        browser.find_element_by_css_selector(prenota).click()  # "prenota il servizio".
     except NoSuchElementException:
         return True
     pass
