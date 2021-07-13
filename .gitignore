@@ -1,6 +1,6 @@
 .italian_consulate
 Source_code.py
 .vscode/settings.json
-env_vars.txt
+env_vars*.txt
 test.py
 env_vars_2.txt
