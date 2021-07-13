@@ -35,7 +35,7 @@
    ```
 5. Open a free trial account with Twilio by following the steps described here: https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account
    &nbsp;
-6. This app will need to control Chrome to interact with the Italian Consulate's webpage. In order for it to do so, you'll also need to download a driver for Chrome. Download the driver for your veresion of Chrome here: https://sites.google.com/a/chromium.org/chromedriver/downloads
+6. This app will need to control Chrome to interact with the Italian Consulate's webpage. In order for it to do so, you'll also need to download a driver for Chrome. Download the driver for your version of Chrome here: https://sites.google.com/a/chromium.org/chromedriver/downloads
 
    Save the driver to the following folder: '/usr/local/bin/'
    &nbsp;
@@ -47,16 +47,22 @@
    &nbsp;
 9. You'll also need to take note of c) your TWILIO PHONE NUMBER, which can be found by clicking on the three dots on the left of your console page, under the home tab. This number is where the SMS will be sent from. You will also need to have d) your own MOBILE NUMBER.
    &nbsp;
-10. Once you have Twilio's ACCOUNT SID, AUTH TOKEN, TWILIO PHONE NUMBER and MOBILE NUMBER, in your Terminal window export them as environment variables as follows:
+10. Once you have Twilio's ACCOUNT SID, AUTH TOKEN, TWILIO PHONE NUMBER and MOBILE NUMBER, create an .env file and add your environment variables as follows:
 
     ```
-    export ACC_SID='your_account_sid'
-    export AUTH_TOKEN='your_auth_token'
-    export TWILIO_NUM='your_twilio_phone_number'
-    export MOB_NUM='your_mobile_number'
+    touch .env
     ```
 
-    &nbsp;
+   This creates an invisible file named ".env" inside /italian_consulate. To see it, hold SHIFT+CMD and click "." (dot). This will show all invisible files. Right-click ".env" and open with a text editor.
+
+   In the text editor window, enter these values:
+
+    ACC_SID=your_account_sid
+    AUTH_TOKEN=your_auth_token
+    TWILIO_NUM=your_twilio_phone_number
+    MOB_NUM=your_mobile_number
+
+   &nbsp;
 11. Now you'll need to export your login details as environment variables. These are saved to be used each time you get logged out (which happens automatically each couple of hours).
 
 ************************************************************************************************* IT'S STRONGLY RECOMMENDED THAT YOU CREATE A UNIQUE LOG IN FOR THIS WEBSITE! I AM NOT RESPONSIBLE FOR ANYTHING THAT GOES WRONG WITH YOUR CREDENTIALS, OR IN CASE OF DATA LEAKS! NOTHING IS HASHED HERE, AND I GAVE VERY LITTLE CONSIDERATION TO SECURITY IN THIS CODE! *************************************************************************************************
