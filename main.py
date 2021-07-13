@@ -55,9 +55,6 @@ class RunChecks():
             }
 
             for i in range(len(self.available_dates)):
-                # if len(self.available_dates[i][0]) == 1:
-                #     day = '0' + self.available_dates[i][0]
-                # else:
                 day = self.available_dates[i][0]
                 month = months_dict[self.available_dates[i][1][:-5]]
                 year = self.available_dates[i][1][-4:]
@@ -91,7 +88,6 @@ class RunChecks():
                     browser.get(servizi_link)
 
         # Sends the message.
-        #TODO: Create function to parse, order, and send SMS with available dates.
         message = "Available dates at the Italian Consulate" + self.parse_dates()
         twilioCli.messages.create(body=message, from_=myTwilioNumber, to=myMobNumber)
 
