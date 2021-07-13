@@ -13,9 +13,9 @@ pickleshare==0.7.5
 prompt-toolkit==3.0.19
 ptyprocess==0.7.0
 Pygments==2.9.0
-PyInputPlus==0.2.12
 PyJWT==1.7.1
 PySimpleValidate==0.2.12
+python-decouple==3.4
 pytz==2021.1
 requests==2.25.1
 selenium==3.141.0
