@@ -24,11 +24,6 @@ browser.implicitly_wait(2)
 class RunChecks():
     available_dates = []
 
-
-    def __init__(self) -> None:
-        self.__driver_func()
-
-
     def countdown(self, t) -> None:
         for i in range(t, 0, -1):
                 sys.stdout.flush()
@@ -69,7 +64,8 @@ class RunChecks():
 
             return ', '.join(self.available_dates)
 
-    def __driver_func(self) -> bool:
+
+    def driver_func(self) -> bool:
 
         while not self.available_dates:
             for time_of_day, am_pm in enumerate(ufficio_passaporti_links):
@@ -220,8 +216,8 @@ def main() -> None:
         
         if prenota_il_servizio(prenotaIlServizio_link):  #if no 'prenota' link
             continue
-        run_checks = RunChecks
-        slot = run_checks()
+        run_checks = RunChecks()
+        slot = run_checks.driver_func()
 
         # end_time = time.perf_counter()
         # print(start_time - end_time)
