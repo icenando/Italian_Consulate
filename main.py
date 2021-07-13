@@ -3,7 +3,7 @@ from selenium.webdriver import Chrome
 from selenium.common.exceptions import NoSuchElementException
 
 import sys
-import os
+# import os
 from datetime import datetime
 import time
 
@@ -100,8 +100,6 @@ class RunChecks():
 
     def __passaporto_am_pm(self, am_pm: str) -> None:       
         browser.find_element_by_css_selector(am_pm).click()  # "passaporto".
-
-
         browser.find_element_by_css_selector(privacy_check).click()  # Checks privavy checkbox.
         browser.find_element_by_css_selector(conferma_btn).click()
 

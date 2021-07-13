@@ -2,25 +2,24 @@
 # config.py - configuration variables for main.py
 
 from twilio.rest import Client  # Twilio.com, for SMS message.
-import os
-
+from decouple import UndefinedValueError, config
 
 ##### Twilio variables #####
 # Open a Twilio account and retrieve the following info.
-accountSID = os.environ['ACC_SID']
-authToken = os.environ['AUTH_TOKEN']
-myTwilioNumber = os.environ['TWILIO_NUM']  # Only US and Canada numbers in the trial account.
-myMobNumber = os.environ['MOB_NUM']    # Number that will be receive the SMS notification.
+accountSID = config('ACC_SID')
+authToken = config('AUTH_TOKEN')
+myTwilioNumber = config('TWILIO_NUM')  # Only US and Canada numbers in the trial account.
+myMobNumber = config('MOB_NUM')    # Number that will be receive the SMS notification.
 ########################
 
 twilioCli = Client(accountSID, authToken)
 
 
-my_email = os.environ['EMAIL']
-password = os.environ['PW']
+my_email = config('EMAIL')
+password = config('PW')
 
 # Optional field 'Nota' on Italian Consulate website
-if os.getenv('NOTA') != None:
-    nota = os.environ['NOTA']
-else:
+try: 
+    nota = config('NOTA')
+except UndefinedValueError:
     nota = ''
