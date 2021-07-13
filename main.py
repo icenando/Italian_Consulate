@@ -3,7 +3,6 @@ from selenium.webdriver import Chrome
 from selenium.common.exceptions import NoSuchElementException
 
 import sys
-# import os
 from datetime import datetime
 import time
 
@@ -11,9 +10,8 @@ from config import twilioCli, myTwilioNumber, myMobNumber, twilioCli, my_email, 
 from func_vars import *
 
 
-# Start of programme
+########## Start of programme #############
 
-# start_time = time.perf_counter()
 options = webdriver.ChromeOptions()
 options.headless=True
 browser = Chrome(executable_path='/usr/local/bin/chromedriver', options=options)  # Launches browswer.
@@ -77,8 +75,6 @@ class RunChecks():
                 # If still logged in but no free slots are found, refreshes the page before starting again.
                 elif calendar_response == "no_avail_pm":
                     print("<< Awaiting to refresh the page before restarting search >>")
-                    # end_time = time.perf_counter()
-                    # print(end_time - start_time)
                     self.countdown(25)
                     print("<< Reloading page >>")
                     browser.get(servizi_link)
@@ -218,9 +214,6 @@ def main() -> None:
             continue
         run_checks = RunChecks()
         slot = run_checks.driver_func()
-
-        # end_time = time.perf_counter()
-        # print(start_time - end_time)
 
     browser.quit()
     return None
