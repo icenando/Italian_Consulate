@@ -1,187 +1,106 @@
-from selenium import webdriver
-from selenium.webdriver import Chrome
-from selenium.common.exceptions import NoSuchElementException
-
 import sys
-from datetime import datetime
 import time
 
-from config import twilioCli, myTwilioNumber, myMobNumber, twilioCli, my_email, password
+from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver import Chrome
+
+from config import my_email, myMobNumber, myTwilioNumber, password, twilioCli
 from func_vars import *
 
-
-########## Start of programme #############
+########## Start #############
 
 options = webdriver.ChromeOptions()
-options.headless=True
-browser = Chrome(executable_path='/usr/local/bin/chromedriver', options=options)  # Launches browswer.
+options.headless = False
+browser = Chrome(
+    executable_path="/usr/local/bin/chromedriver", options=options
+)  # Launches browswer.
 browser.implicitly_wait(2)
 
 
-
-class RunChecks():
-    available_dates = []
-
+class RunChecks:
     def countdown(self, t) -> None:
         for i in range(t, 0, -1):
-                sys.stdout.flush()
-                if len(str(i)) < 2:
-                    i = str(f" {i}")
-                sys.stdout.write (f'\t{i}\r',)
-                time.sleep(1)
+            sys.stdout.flush()
+            if len(str(i)) < 2:
+                i = str(f" {i}")
+            sys.stdout.write(
+                f"\t{i}\r",
+            )
+            time.sleep(1)
 
-
-    def parse_dates(self) -> str:
-            months_dict = {
-                'gennaio': '01',
-                'febbraio': '02',
-                'marzo': '03',
-                'aprile': '04',
-                'maggio': '05',
-                'giugno': '06',
-                'luglio': '07',
-                'agosto': '08',
-                'settembre': '09',
-                'ottobre': '10',
-                'novembre': '11',
-                'dicembre': '12'
-            }
-
-            for i in range(len(self.available_dates)):
-                day = self.available_dates[i][0]
-                month = months_dict[self.available_dates[i][1][:-5]]
-                year = self.available_dates[i][1][-4:]
-                self.available_dates[i] = '/'.join([day, month, year])
-                # Converts to datetime for sorting
-                self.available_dates[i] = datetime.strptime(self.available_dates[i], '%d/%m/%Y')
-                
-            self.available_dates.sort()
-            # Converts back to str
-            for i in range(len(self.available_dates)):
-                self.available_dates[i] = datetime.strftime(self.available_dates[i], '%d/%m/%Y')
-
-            return ', '.join(self.available_dates)
-
-
-    def driver_func(self) -> bool:
-
-        while not self.available_dates:
-            for time_of_day, am_pm in enumerate(ufficio_passaporti_links):
-                self.__passaporto_am_pm(am_pm)
-
-                calendar_response = self.__monitor_calendar_changes(time_of_day)
-                if calendar_response == "logged_out":
-                    return False
-                # If still logged in but no free slots are found, refreshes the page before starting again.
-                elif calendar_response == "no_avail_pm":
-                    print("<< Awaiting to refresh the page before restarting search >>")
-                    self.countdown(25)
-                    print("<< Reloading page >>")
-                    browser.get(servizi_link)
-
-        # Sends the message.
-        message = "Available dates at the Italian Consulate" + self.parse_dates()
-        twilioCli.messages.create(body=message, from_=myTwilioNumber, to=myMobNumber)
-
-        return True
-
-
-    def __passaporto_am_pm(self, am_pm: str) -> None:       
-        browser.find_element_by_css_selector(am_pm).click()  # "passaporto".
-        browser.find_element_by_css_selector(privacy_check).click()  # Checks privavy checkbox.
-        browser.find_element_by_css_selector(conferma_btn).click()
-
-        return None
-
-
-    def __monitor_calendar_changes(self, time_of_day: str) -> str:
-        if time_of_day == 0:
-            time_of_day = 'am'
-        else: time_of_day = "pm"
-        print(f"<< Searching ({time_of_day}) calendar for available appointment slots >>")
-
-        # Tries to find calender:
+    def __monitor_calendar_changes(self) -> str:
+        print(f"<< Checking for no-availability notice >>")
         try:
-            current_calendar = browser.find_element_by_css_selector(calendar_selector)
+            browser.find_element_by_css_selector(no_services_popup)
+            print(f"<< No availability >>")
+            return "no_avail"
         except NoSuchElementException:
-            # If no calendar, checks if there's 'no availability' pop up.
-            try:
-                browser.find_element_by_css_selector(no_services_popup)
-            except NoSuchElementException:
+            if (
+                browser.current_url == "https://prenotami.esteri.it/UserArea"
+                or browser.current_url == "https://prenotami.esteri.it"
+            ):
                 print("<< Automatically logged out. Restarting >>")
                 return "logged_out"
+        return "dates_available"
 
-            # If there is a 'no availability' pop up.
-            print(f"<< No availability ({time_of_day}) >>")
-            if time_of_day == "pm":
-                return "no_avail_pm"
-            # Loads the 'servizi' page, where am and pm links are
-            browser.get(servizi_link)
-            return ''
-
-        # After checks, if the calendar is in the page.
-        two_months_ahead = 0
-        while two_months_ahead <= 2:
-            checking_month = browser.find_element_by_css_selector(current_month).text
-            print(f"<< Checking month: {checking_month} >>")
-            print("<< Checking days: ", end= '')
-            # Iterates through weeks.
-            for week in current_calendar.find_elements_by_css_selector('tr'):
-                # Iterates through the days of that week.
-                for day in week.find_elements_by_tag_name('td'):
-                    checking_day = day.text
-                    print(checking_day, end=' ')
-                    # If available day.
-                    if day.get_attribute("class") not in day_status:
-                        print(' >>\n')
-                        slot_date = ' '.join([checking_day, checking_month])
-                        message = "Available slot: " + slot_date + time_of_day
-                        print(f"\n<< **** {message} **** >>\n\n")
-                        self.available_dates.append([checking_day, checking_month])
-                        return None
-
-            # If no slots found.    
-            print(' >>')
-            print(f"<< No available slots in {checking_month} >>\n")
-            # Advances the calendar to next month.
-            if two_months_ahead < 2:
-                browser.find_element_by_css_selector(next_month_cal).click()
-            two_months_ahead += 1
-
-        # No slots found in the current month and next two months.
-        return None
+    def driver_func(self) -> bool:
+        while True:
+            calendar_response = self.__monitor_calendar_changes()
+            # If still logged in but no free slots are found, refreshes the page before starting again.
+            if calendar_response == "no_avail":
+                print("<< Awaiting to refresh the page before restarting search >>")
+                self.countdown(25)
+                print("<< Reloading page >>")
+                browser.get(servizi_link)
+                prenota_documenti_di_identita(ufficio_passaporti_link)
+            elif calendar_response == "logged_out":
+                return False
+            else:
+                print(
+                    "<< Available dates! Log in now to check: https://prenotami.esteri.it"
+                )
+                message = "Available dates at the Italian Consulate!"
+                # Sends the message.
+                twilioCli.messages.create(
+                    body=message, from_=myTwilioNumber, to=myMobNumber
+                )
+                self.available_dates = True
+                return True
 
 
 def load_page(url: str) -> None:
-    print('<< Loading page >>')
+    print("<< Loading page >>")
     browser.get(url)
     return None
 
 
 def fill_in_login_form(
-        username: str, 
-        pw: str, 
-        login_btn: str, 
-        my_email: str,
-        password: str,
-        wrong_pw = False,
-        ) -> bool:
+    username: str,
+    pw: str,
+    login_btn: str,
+    my_email: str,
+    password: str,
+    wrong_pw=False,
+) -> bool:
     # Repeat until login is succesful and page changes.
     password = password
 
     while browser.current_url != "https://prenotami.esteri.it/UserArea":
         browser.find_element_by_css_selector(username).clear()
         if wrong_pw:
-            print("""
+            print(
+                """
                 << Login failed >>\n
                 << Please export your credential as follows and relaunch the app: >>\n
                 export EMAIL='your_email_goes_here' && export PW='your_password_goes_here'
-                """)
+                """
+            )
             return wrong_pw
         browser.find_element_by_css_selector(username).send_keys(my_email)
         browser.find_element_by_css_selector(pw).send_keys(password)
         browser.find_element_by_css_selector(login_btn).click()
-        print('<< Filling in the form >>')
+        print("<< Filling in the form >>")
         wrong_pw = True
     return False
 
@@ -195,28 +114,44 @@ def prenota_il_servizio(prenota: str) -> None:
     pass
 
 
+def prenota_documenti_di_identita(prenota_documenti) -> None:
+    print("<< Navigating to identity document booking >>")
+    try:
+        browser.find_element_by_css_selector(ufficio_passaporti_link).click()
+    except NoSuchElementException:
+        return True
+    pass
+
+
 def main() -> None:
+    message = "Available dates at the Italian Consulate!"
+    # Sends the message.
+    twilioCli.messages.create(
+        body=message, from_=myTwilioNumber, to=myMobNumber
+    )
     slot = False
     while not slot:
         load_page(initial_url)
 
         if fill_in_login_form(  # if login fails
-                username_field, 
-                pw_field, 
-                login_conf_btn, 
-                my_email, 
-                password
-                ):
+            username_field, pw_field, login_conf_btn, my_email, password
+        ):
             browser.quit()
             return None
-        
-        if prenota_il_servizio(prenotaIlServizio_link):  #if no 'prenota' link
+
+        # if no 'prenota' link
+        if prenota_il_servizio(prenotaIlServizio_link):
             continue
-        run_checks = RunChecks()
-        slot = run_checks.driver_func()
+
+        # if no 'prenota' link for identity documents
+        if prenota_documenti_di_identita(ufficio_passaporti_link):
+            continue
+
+        slot = RunChecks().driver_func()
 
     browser.quit()
     return None
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

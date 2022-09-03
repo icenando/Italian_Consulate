@@ -15,9 +15,7 @@ login_conf_btn = "#login-form > button"
 # prenotaIlServizio()
 prenotaIlServizio_link = "#advanced > span"
 servizi_link = "https://prenotami.esteri.it/Services"  # Here is where the am or pm links are
-ufficio_passaporti_link_am = "#dataTableServices > tbody > tr:nth-child(5) > td:nth-child(4) > a > button"
-ufficio_passaporti_link_pm = "#dataTableServices > tbody > tr:nth-child(6) > td:nth-child(4) > a > button"
-ufficio_passaporti_links = [ufficio_passaporti_link_am, ufficio_passaporti_link_pm]
+ufficio_passaporti_link = "#dataTableServices > tbody > tr:nth-child(2) > td:nth-child(4) > a > button"
 no_services_popup = "body > div.jconfirm.jconfirm-light.jconfirm-open"
 nota_css = "#BookingNotes"
 privacy_check = "#PrivacyCheck"
