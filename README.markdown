@@ -1,12 +1,12 @@
-<h1>AVAILABILITY CHECKER</h1>
+<h1>🇮🇹 ITALIAN CONSULATE AVAILABILITY CHECKER</h1>
 
-<p>Automatically checks for appointment for passport renewals at the Italian Consulate in London, UK. It works for the current month and the next two.</p>
+<p>Automatically checks for appointment for <b>passport renewals (only)</b> at the Italian Consulate in London, UK.</p>
 <br>
 <h2>MOTIVATION</h2>
-<p>Getting appointments for passport renewals at the Italian Consulate in London is infamously difficult, with gangs illegally selling appointments at a premium price.</p>
-<p>This code regularly checks for availability and alerts users, via SMS and email, as soon as a slot becomes available.</p>
+<p>Pure rage. Getting appointments for passport renewals at the Italian Consulate in London is infamously difficult, with gangs illegally selling appointments at a premium price.</p>
+<p>This code checks for availability each 25 seconds and alerts users via SMS as soon as a slot becomes available.</p>
 <p>I was able to book an appointment two days after implementing this code.</p>
-<p>Frankly, the Italian Consulate should offer this notification service themselves...</p>
+<p>Frankly, the Italian Consulate should offer this notification service themselves 🤌</p>
 <br>
 <h2>COMPATIBILITY</h2>
 <p>MacOS with Chrome</p>
@@ -21,6 +21,8 @@
    ```
    mkdir italian_consulate && cd italian_consulate
    ```
+1.5. Git clone / download this repo.
+
 2. Create a virtual environment for the app to run. I chose to name mine '.italian_consulate'. The dot in front of the name makes the virtual environment isolated from the rest of the system (also makes it invisible):
 
    ```
