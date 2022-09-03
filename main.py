@@ -1,5 +1,6 @@
 import sys
 import time
+from os import system
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -58,6 +59,9 @@ class RunChecks:
             else:
                 print(
                     "<< Available dates! Log in now to check: https://prenotami.esteri.it"
+                )
+                system(
+                    'say "Available dates at the Italian consulate! Log in now to book!'
                 )
                 message = "Available dates at the Italian Consulate!"
                 # Sends the message.
@@ -123,9 +127,6 @@ def prenota_documenti_di_identita(prenota_documenti) -> None:
 
 
 def main() -> None:
-    message = "Available dates at the Italian Consulate! Log in now to check: https://prenotami.esteri.it"
-    # Sends the message.
-    twilioCli.messages.create(body=message, from_=myTwilioNumber, to=myMobNumber)
     slot = False
     while not slot:
         load_page(initial_url)
