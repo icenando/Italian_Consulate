@@ -11,10 +11,9 @@ from func_vars import *
 ########## Start #############
 
 options = webdriver.ChromeOptions()
-options.headless = False
-browser = Chrome(
-    executable_path="/usr/local/bin/chromedriver", options=options
-)  # Launches browswer.
+options.headless = True
+#  Launches browswer.
+browser = Chrome(executable_path="/usr/local/bin/chromedriver", options=options)
 browser.implicitly_wait(2)
 
 
@@ -124,11 +123,9 @@ def prenota_documenti_di_identita(prenota_documenti) -> None:
 
 
 def main() -> None:
-    message = "Available dates at the Italian Consulate!"
+    message = "Available dates at the Italian Consulate! Log in now to check: https://prenotami.esteri.it"
     # Sends the message.
-    twilioCli.messages.create(
-        body=message, from_=myTwilioNumber, to=myMobNumber
-    )
+    twilioCli.messages.create(body=message, from_=myTwilioNumber, to=myMobNumber)
     slot = False
     while not slot:
         load_page(initial_url)
@@ -139,11 +136,11 @@ def main() -> None:
             browser.quit()
             return None
 
-        # if no 'prenota' link
+        # if no 'prenota' link, restart loop
         if prenota_il_servizio(prenotaIlServizio_link):
             continue
 
-        # if no 'prenota' link for identity documents
+        # if no 'prenota' link for identity documents restart loop
         if prenota_documenti_di_identita(ufficio_passaporti_link):
             continue
 
