@@ -11,6 +11,9 @@
 <h2>COMPATIBILITY</h2>
 <p>MacOS with Chrome</p>
 <br>
+<h2>REQUIREMENTS</H2>
+<P>Python 3.8.9<p>
+<br>
 <h2>SETUP</h2>
 
 1. On Mac, open Terminal ('CMD + spacebar' and type Terminal), create a folder to hold the project files and access the directory:
